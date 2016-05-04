@@ -6,10 +6,12 @@ import System.IO
 import System.Exit
 import XMonad
 import XMonad.Actions.CycleWS
+import XMonad.Actions.UpdatePointer
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.SetWMName
+import XMonad.Hooks.EwmhDesktops
 import XMonad.Layout.Fullscreen
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spiral
@@ -76,7 +78,9 @@ myManageHook = composeAll
     , className =? "VirtualBox"     --> doShift "4:vm"
     , className =? "Xchat"          --> doShift "5:media"
     , className =? "stalonetray"    --> doIgnore
-    , isFullscreen --> (doF W.focusDown <+> doFullFloat)]
+--  , isFullscreen --> (doF W.focusDown <+> doFullFloat)
+    , isFullscreen --> doFullFloat
+    ]
 
 
 ------------------------------------------------------------------------
@@ -351,16 +355,20 @@ main = do
   spawn "feh --bg-center /D:/Obrazy/deadly_allure_by_steveargyle-d4p0iew.jpg"
   spawn "compton"
   spawn "killall xSwipe.pl ; ~/git/xSwipe-master/xSwipe.pl"
+  spawn "synclient TapButton1=1"
   xmproc <- spawnPipe "xmobar ~/.xmonad/xmobar.hs"
   xmonad $ defaults {
-      logHook = dynamicLogWithPP $ xmobarPP {
+      logHook = dynamicLogWithPP xmobarPP  
+  {
             ppOutput = hPutStrLn xmproc
           , ppTitle = xmobarColor xmobarTitleColor "" . shorten 100
           , ppCurrent = xmobarColor xmobarCurrentWorkspaceColor ""
           , ppSep = "   "
       }
-      , manageHook = manageDocks <+> myManageHook
-      , startupHook = setWMName "LG3D"
+          >> updatePointer (Relative 0.9 0.9),
+      -- manageHook = manageDocks <+> myManageHook,
+      manageHook = myManageHook,
+      startupHook = setWMName "LG3D"
   }
 
 
@@ -387,7 +395,10 @@ defaults = defaultConfig {
     mouseBindings      = myMouseBindings,
 
     -- hooks, layouts
+    logHook = dynamicLog 
+        >> updatePointer (Relative 0.9 0.9) ,
     layoutHook         = smartBorders $ myLayout,
     manageHook         = myManageHook,
+    handleEventHook     =  handleEventHook defaultConfig <+> XMonad.Hooks.EwmhDesktops.fullscreenEventHook,
     startupHook        = myStartupHook
 }

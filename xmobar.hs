@@ -11,15 +11,13 @@ Config {
         Run Swap ["-t","Swap: <usedratio>%","-H","1024","-L","512","-h","#FFB6B0","-l","#CEFFAC","-n","#FFFFCC"] 10,
         Run Com "volume" [""] "volume" 10,
         Run Network "wlan0" ["-t","Net: <rx>, <tx>","-H","200","-L","10","-h","#FFB6B0","-l","#CEFFAC","-n","#FFFFCC"] 10,
---        Run Com "music" [] "music" 10 ,
         Run Com "/bin/bash" ["-c", "~/.xmonad/bin/volume"] "vol" 10,
         Run Com "/bin/bash" ["-c", "~/.xmonad/bin/music"] "muss" 10,
         Run Com "/bin/bash" ["-c", "~/.xmonad/bin/battery"] "batt" 10,
---        Run MPD ["-t", "<state>: <artist> - <track>"] 10,
         Run Date "%a %b %_d %k:%M:%S" "date" 10,
         Run UnsafeStdinReader
     ],
     sepChar = "%",
     alignSep = "}{",
-    template = "%UnsafeStdinReader% }   %muss% {<fc=#FFCCAA>%date%</fc> V: %vol% B: %batt% %memory% %wlan0% | %EPKK%"
+    template = "%UnsafeStdinReader% }   %muss% {<fc=#FFCCAA>%date%</fc> V: %vol% B: %batt% %memory% %wlan0%"
 }
