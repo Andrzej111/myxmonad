@@ -1,0 +1,8 @@
+#!/bin/bash
+
+feh --bg-center ~/.xmonad/background.jpg&
+compton&
+killall xSwipe.pl; /usr/bin/perl ~/.xmonad/xSwipe/xSwipe.pl >/dev/null 2>&1 &
+synclient TapButton1=1&
+xscreensaver -no-splash&
+

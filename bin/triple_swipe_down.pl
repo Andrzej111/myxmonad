@@ -8,7 +8,7 @@ $_ = $window;
 if (m/Firefox/) {
     `xdotool key ctrl+Page_Down`;
 } else {
-    `xdotool key super+shift+c`;
+    `xdotool key alt+shift+c`;
 }
 
 

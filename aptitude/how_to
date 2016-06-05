@@ -1,0 +1,5 @@
+# dumped with command: 
+# aptitude search -F '%p' '~i!~M' > package_list 
+
+# restore with
+xargs aptitude --schedule-only install < package_list; aptitude install; 

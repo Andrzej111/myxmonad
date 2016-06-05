@@ -6,5 +6,5 @@ $_ = $window;
 if (m/Firefox/) {
     `xdotool key ctrl+Page_Up`;
 } else {
-    `xdotool key super+Return`;
+    `xdotool key alt+shift+x`;
 }

@@ -35,10 +35,10 @@ myScreensaver = "/usr/bin/gnome-screensaver-command --lock"
 
 -- The command to take a selective screenshot, where you select
 -- what you'd like to capture on the screen.
-mySelectScreenshot = "select-screenshot"
+mySelectScreenshot = "~/.xmonad/bin/select-screenshot"
 
 -- The command to take a fullscreen screenshot.
-myScreenshot = "screenshot"
+myScreenshot = "~/.xmonad/bin/screenshot"
 
 -- The command to use as a launcher, to launch commands that don't have
 -- preset keybindings.
@@ -149,25 +149,30 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   [ ((modMask .|. shiftMask, xK_Return),
      spawn $ XMonad.terminal conf)
 
-  -- Lock the screen using command specified by myScreensaver.
-  , ((modMask .|. controlMask, xK_l),
+  , ((controlMask, xK_Print), -- PrtSc
      spawn myScreensaver)
+
+  -- Take a selective screenshot using the command specified by mySelectScreenshot.
+  , ((modMask, 0xff61), -- alt+PrtSc
+     spawn mySelectScreenshot)
 
   -- Spawn the launcher using command specified by myLauncher.
   -- Use this to launch programs without a key binding.
   , ((modMask, xK_p),
      spawn myLauncher)
 
-  -- Take a selective screenshot using the command specified by mySelectScreenshot.
-  , ((modMask .|. shiftMask, xK_p),
-     spawn mySelectScreenshot)
 
   -- Take a full screenshot using the command specified by myScreenshot.
   , ((modMask .|. controlMask .|. shiftMask, xK_p),
      spawn myScreenshot)
 
   -- Mute volume.
-  , ((modMask .|. controlMask, xK_m),
+  , ((0, 0x1008ff59),
+     spawn "~/.xmonad/bin/toggle_screen.pl")
+  , ((0, 0x1008ff2d),
+     spawn "~/.xmonad/bin/screensaver.pl")
+  -- Mute volume.
+  , ((0, 0x1008ff12),
      spawn "amixer -q set Master toggle")
 
   -- Decrease volume.
@@ -188,6 +193,8 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   -- Audio next.
   , ((0, 0x1008FF17),
      spawn "mpc next")
+  , ((0, 0x1008ff15),
+     spawn "mpc stop")
 
   -- Eject CD tray.
   , ((0, 0x1008FF2C),
@@ -244,6 +251,9 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 
   -- Swap the focused window and the master window.
   , ((modMask, xK_Return),
+     windows W.swapMaster)
+
+  , ((modMask .|. shiftMask , xK_x),
      windows W.swapMaster)
 
   -- Swap the focused window with the next window.
@@ -352,10 +362,7 @@ myStartupHook = return ()
 -- Run xmonad with all the defaults we set up.
 --
 main = do
-  spawn "feh --bg-center /D:/Obrazy/deadly_allure_by_steveargyle-d4p0iew.jpg"
-  spawn "compton"
-  spawn "killall xSwipe.pl ; ~/git/xSwipe-master/xSwipe.pl"
-  spawn "synclient TapButton1=1"
+  spawn "~/.xmonad/xmonad-rc >/dev/null 2>&1"
   xmproc <- spawnPipe "xmobar ~/.xmonad/xmobar.hs"
   xmonad $ defaults {
       logHook = dynamicLogWithPP xmobarPP  
