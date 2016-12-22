@@ -96,11 +96,13 @@ myManageHook = composeAll
 myLayout = avoidStruts (
     ThreeColMid 1 (3/100) (1/2) |||
     spiral (6/7)) |||
-    noBorders (fullscreenFull Full) ||| avoidStruts (
-    Tall 1 (3/100) (1/2) |||
-    Mirror (Tall 1 (3/100) (1/2)) |||
-    tabbed shrinkText tabConfig |||
-    Full )
+    noBorders (fullscreenFull Full) ||| 
+    avoidStruts (
+        tabbed shrinkText tabConfig |||
+        Tall 1 (3/100) (1/2) |||
+        Mirror (Tall 1 (3/100) (1/2)) |||
+        Full
+    )
 
 
 ------------------------------------------------------------------------
@@ -126,7 +128,7 @@ xmobarTitleColor = "#FFB6B0"
 -- Color of current workspace in xmobar.
 xmobarCurrentWorkspaceColor = "#CEFFAC"
 
--- Width of the window border in pixels.
+-- borders suck
 myBorderWidth = 0
 
 
@@ -206,11 +208,15 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   -- next ws
   , ((modMask .|. controlMask, xK_Right),
      nextWS)
-  -- bindings for triple swipe on touchpad
-  , ((modMask .|. controlMask, xK_Up),
-     spawn "~/.xmonad/bin/triple_swipe_up.pl")
-  , ((modMask .|. controlMask, xK_z),
-     spawn "~/.xmonad/bin/triple_swipe_down.pl")
+--  -- bindings for triple swipe on touchpad
+--  , ((modMask .|. controlMask, xK_Up),
+--     spawn "~/.xmonad/bin/sipes.pl 3up")
+--  , ((modMask .|. controlMask, xK_z),
+--     spawn "~/.xmonad/bin/sipes.pl 3down")
+--  , ((modMask .|. controlMask, xK_v),
+--     spawn "~/.xmonad/bin/sipes.pl 3press")
+--  , ((modMask .|. controlMask, xK_n),
+--     spawn "~/.xmonad/bin/sipes.pl 2press")
   --------------------------------------------------------------------
   -- "Standard" xmonad key bindings
   --
@@ -362,9 +368,9 @@ myStartupHook = return ()
 -- Run xmonad with all the defaults we set up.
 --
 main = do
-  spawn "~/.xmonad/xmonad-rc >/dev/null 2>&1"
+  spawn "~/.xmonad/bin/xmonad-rc >/dev/null 2>&1"
   xmproc <- spawnPipe "xmobar ~/.xmonad/xmobar.hs"
-  xmonad $ defaults {
+  xmonad $ ewmh defaultConfig {
       logHook = dynamicLogWithPP xmobarPP  
   {
             ppOutput = hPutStrLn xmproc
@@ -375,7 +381,14 @@ main = do
           >> updatePointer (Relative 0.9 0.9),
       -- manageHook = manageDocks <+> myManageHook,
       manageHook = myManageHook,
-      startupHook = setWMName "LG3D"
+      layoutHook         = smartBorders $ myLayout,
+      borderWidth        = myBorderWidth,
+      startupHook = setWMName "LG3D",
+    workspaces         = myWorkspaces,
+    normalBorderColor  = myNormalBorderColor,
+    keys               = myKeys,
+    mouseBindings      = myMouseBindings,
+    focusedBorderColor = myFocusedBorderColor
   }
 
 
@@ -407,5 +420,6 @@ defaults = defaultConfig {
     layoutHook         = smartBorders $ myLayout,
     manageHook         = myManageHook,
     handleEventHook     =  handleEventHook defaultConfig <+> XMonad.Hooks.EwmhDesktops.fullscreenEventHook,
+--    handleEventHook     =  ewmh defaultConfig <+> XMonad.Hooks.EwmhDesktops.fullscreenEventHook,
     startupHook        = myStartupHook
 }

@@ -6,7 +6,6 @@ while (my $x = shift @ARGV){
 }
 $_ = $uri;
 #`xdotool search --name firefox windowkill`;
-`killall firefox`;
 
 s/.$//;
 #split @ARGV;

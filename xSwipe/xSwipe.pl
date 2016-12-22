@@ -7,12 +7,18 @@
   #  #   #    #  ##  ##     #    #       #
  #    #   ####   #    #     #    #       ######
 ################################################
-use strict;
 use Time::HiRes();
 use X11::GUITest qw( :ALL );
 use FindBin;
+use v5.18;
+#use experimental 'lexical_subs', 'smartmatch', 'given', 'when';
 #debug
+no warnings;
 use Smart::Comments;
+use threads ('yield',
+             'stack_size' => 64*4096,
+             'exit' => 'threads_only',
+             'stringify');
 
 my $natural_scroll = 0;
 my $base_dist = 0.1;
@@ -64,7 +70,7 @@ while(my $ARGV = shift){
   }
 }
 # add syndaemon setting
-system("syndaemon -m 10 -i 0.5 -K -d");
+#system("syndaemon -m 10 -i 0.5 -K -d");
 
 open (scroll_setting, "synclient -l | grep ScrollDelta | grep -v -e Circ | ")or die "can't synclient -l";
 my @scroll_setting = <scroll_setting>;
@@ -306,8 +312,9 @@ while(my $line = <INFILE>){
     if( abs($time - $event_time) > 0.2 ){
       ### $time - $event_time got: $time - $event_time
       $event_time = $time;
-      PressKey $_ foreach(@event_string);
-      ReleaseKey $_ foreach(reverse @event_string);
+       my $command_str = $event_string[0];
+        comm($command_str);
+        #use Shell;
       ### @event_string
     }# if enough time has passed
     @event_string = ("default");
@@ -315,6 +322,12 @@ while(my $line = <INFILE>){
 }#synclient line in
 close(INFILE);
 
+sub comm{
+    my $command = shift @_;
+    say "$command";
+    my $thr = threads->create(sub {`swipes $command`;});
+    $thr->detach();
+}
 ###init
 sub init_synclient{
   ### init_synclient

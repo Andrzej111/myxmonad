@@ -1,0 +1,2 @@
+#!/bin/bash
+ifconfig wlan0 | grep inet\ | perl -nE 'm/(\d+\.\d+\.\d+\.\d+)/; say "@".$1'
